@@ -213,6 +213,14 @@ pub const Window = opaque {
         SDL_SetWindowTitle(window, title);
     }
     extern fn SDL_SetWindowTitle(window: *Window, title: ?[*:0]const u8) void;
+
+    pub const getWindowSurface = SDL_GetWindowSurface;
+    extern fn SDL_GetWindowSurface(window: ?*Window) *Surface;
+
+    pub fn updateWindowSurface(window: *Window) Error!void {
+        if (SDL_UpdateWindowSurface(window) < 0) return makeError();
+    }
+    extern fn SDL_UpdateWindowSurface(window: ?*Window) i32;
 };
 
 pub fn getNumVideoDrivers() Error!u16 {
@@ -950,10 +958,20 @@ pub const FPoint = extern struct {
 //
 //--------------------------------------------------------------------------------------------------
 pub const Surface = opaque {
+    pub fn loadBMP(file: [:0]const u8) *Surface {
+        return SDL_LoadBMP(file);
+    }
+    extern fn SDL_LoadBMP(file: [*:0]const u8) *Surface;
+
     pub fn destroy(surface: *Surface) void {
         SDL_DestroySurface(surface);
     }
     extern fn SDL_DestroySurface(surface: *Surface) void;
+
+    pub fn blitSurface(src: *const Surface, srcRect: ?*const Rect, dst: *const Surface, dstRect: ?*const Rect) void {
+        _ = SDL_BlitSurface(src, srcRect, dst, dstRect);
+    }
+    pub extern fn SDL_BlitSurface(src: *const Surface, srcrect: [*c]const Rect, dst: *const Surface, dstrect: [*c]const Rect) c_int;
 };
 
 //--------------------------------------------------------------------------------------------------
