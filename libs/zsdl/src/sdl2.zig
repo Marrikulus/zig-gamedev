@@ -943,11 +943,19 @@ pub const FPoint = extern struct {
 //
 //--------------------------------------------------------------------------------------------------
 pub const Surface = opaque {
+    pub fn loadBMP(file: [:0]const u8) *Surface {
+        return SDL_LoadBMP_RW(SDL_RWFromFile(file, "rb"), 1);
+    }
+    extern fn SDL_LoadBMP_RW(ops: *RWops, freesrc: i32) *Surface;
+    extern fn SDL_RWFromFile(file: [*:0]const u8, mode: [*:0]const u8) *RWops;
+
     pub fn free(surface: *Surface) void {
         SDL_FreeSurface(surface);
     }
     extern fn SDL_FreeSurface(surface: *Surface) void;
 };
+
+const RWops = opaque {};
 
 //--------------------------------------------------------------------------------------------------
 //
